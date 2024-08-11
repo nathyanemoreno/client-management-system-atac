@@ -11,4 +11,8 @@ const router = Router();
 router.post("/auth/sign-in", authSignInController);
 router.post("/auth/sign-up", authSignUpController);
 
+// Client routes
+router.get("/client", [authMiddleware], listClientController);
+router.post("/client", [authMiddleware], createClientController);
+
 export { router };
