@@ -4,7 +4,8 @@ import { AuthSignInBody } from '~/types/dtos/auth';
 
 const authSignInParamsValidate = (data: AuthSignInBody, next: NextFunction): AuthSignInBody | void => {
   const schema = Joi.object<AuthSignInBody>({
-    authToken: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
   });
 
   const { value, error } = schema.validate(data, {

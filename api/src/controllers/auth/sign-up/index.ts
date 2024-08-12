@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { signToken } from '~/use-cases/auth-token/sign';
 import { createUser } from '~/use-cases/users/create-user';
 import { authSignUpParamsValidate } from './validate';
+import bcrypt from 'bcrypt';
 
 const authSignUpController = async (
   req: Request,
@@ -14,7 +15,9 @@ const authSignUpController = async (
     if (validated) {
       const { name, email, password } = validated;
 
-      const user = await createUser({ name, email, password });
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const user = await createUser({ name, email, password: hashedPassword });
 
       //const user = mapUserModelToDTO(user);
 
