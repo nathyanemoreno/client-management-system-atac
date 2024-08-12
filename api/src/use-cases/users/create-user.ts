@@ -1,5 +1,5 @@
 import { database } from '~/infra/database/pg';
-import { User } from '~/models/user';
+import { User } from '~/types/models/user';
 import { CreateUserParams } from '~/types/dtos/user';
 
 async function createUser({
