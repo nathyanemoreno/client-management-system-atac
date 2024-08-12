@@ -1,35 +1,32 @@
 import { NextFunction, Request, Response } from 'express';
-import { verifyToken } from '~/use-cases/auth-token/verify';
-import { getUserById } from '~/use-cases/users/get-by-id';
+import { signToken } from '~/use-cases/auth-token/sign';
+import { getUserByEmailAndPassword } from '~/use-cases/users/get-by-email-and-password';
 import { authSignInParamsValidate } from './validate';
-import { valid } from 'joi';
 
 const authSignInController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+    req: Request,
+    res: Response,
+    next: NextFunction,
 ) => {
-  try {
-    const validated = authSignInParamsValidate(req.body, next);
+    try {
+        const validated = authSignInParamsValidate(req.body, next);
 
-    if (validated) {
-      const authToken = validated.authToken;
+        if (validated) {
+            const { email, password } = validated;
 
-      const { userId } = await verifyToken(authToken);
+            const user = await getUserByEmailAndPassword(email, password);
 
-      const user = await getUserById(userId);
+            if (!user) {
+                return res.status(404).send('No user found');
+            }
 
-      if (!user) {
-        return res.status(401).send('Bad login information');
-      }
+            const authToken = await signToken({ userId: user?.id });
 
-      //const user = mapUserModelToDTO(user);
-
-      res.status(200).send({ user, authToken });
+            res.status(200).send({ user, authToken });
+        }
+    } catch (error) {
+        res.status(500).send(error);
     }
-  } catch (error) {
-    res.status(500).send(error);
-  }
 };
 
 export { authSignInController };

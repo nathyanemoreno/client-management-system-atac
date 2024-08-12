@@ -1,5 +1,10 @@
-interface AuthSignInBody {
+interface AuthSignInWithTokenBody {
   authToken: string;
+}
+
+interface AuthSignInBody {
+  email: string;
+  password: string;
 }
 
 interface AuthSignUpBody {
@@ -8,4 +13,4 @@ interface AuthSignUpBody {
   password: string;
 }
 
-export { AuthSignInBody, AuthSignUpBody };
+export { AuthSignInBody, AuthSignUpBody, AuthSignInWithTokenBody };
