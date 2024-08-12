@@ -2,7 +2,7 @@ import { Client } from 'pg';
 import { database } from '~/infra/database/pg';
 import { ListClientReqQuery } from '~/types/dtos/client';
 
-async function getClients({
+async function list({
   email,
   name,
   phone,
@@ -37,4 +37,4 @@ async function getClients({
   return rows.length ? rows : null;
 }
 
-export { getClients };
+export { list };
