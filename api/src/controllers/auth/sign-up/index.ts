@@ -1,12 +1,13 @@
-import { NextFunction, Request, Response } from 'express';
-import { signToken } from '~/use-cases/auth-token/sign';
-import { createUser } from '~/use-cases/users/create-user';
-import { authSignUpParamsValidate } from './validate';
+import { NextFunction, Request, Response } from "express";
+import { signToken } from "~/use-cases/auth-token/sign";
+import { createUser } from "~/use-cases/users/create-user";
+import { authSignUpParamsValidate } from "./validate";
+import bcrypt from "bcrypt";
 
 const authSignUpController = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const validated = authSignUpParamsValidate(req.body, next);
@@ -14,15 +15,18 @@ const authSignUpController = async (
     if (validated) {
       const { name, email, password } = validated;
 
-      const user = await createUser({ name, email, password });
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const user = await createUser({ name, email, password: hashedPassword });
 
       //const user = mapUserModelToDTO(user);
 
       if (user?.id == null) {
-        return res.status(404).send({ message: 'Could not create user' });
+        return res.status(404).send({ message: "Could not create user" });
       }
 
       const authToken = await signToken({ userId: user?.id });
+      console.log(authToken);
 
       res.status(201).send({ user, authToken });
     }
